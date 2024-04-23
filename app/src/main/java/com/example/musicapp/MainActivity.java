@@ -5,9 +5,12 @@ import android.media.MediaPlayer;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
+    ImageButton playpause;
+    boolean isplaying = false;
     MediaPlayer music;
     TextView tv;
     int i=0;
@@ -18,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        playpause = findViewById(R.id.playPauseButton);
         // Adding the music file to our
         // newly created object music
         music = MediaPlayer.create(this, R.raw.royalty);
@@ -26,27 +30,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Playing the music
-    public void play(View v)
-    {
-        music.start();
+    public void play(View view) {
+        if (isplaying) {
+            music.pause();
+            playpause.setImageResource(R.drawable.play); // Change to play icon
+        } else {
+            music.start();
+            playpause.setImageResource(R.drawable.pause); // Change to pause icon
+        }
+        isplaying = !isplaying;
     }
 
     // Pausing the music
-    public void pause(View v)
-    {
-        music.pause();
-    }
-
-    // Stopping the music
-    public void stop(View v)
+    public void prev(View v)
     {
         music.stop();
-        if (i%2==1){music = MediaPlayer.create(this, R.raw.royalty);
-        tv.setText("Royalty");
+        isplaying=false;
+        playpause.setImageResource(R.drawable.pause);
+        i-=1;
+        setmusic();
+        play(v);
+    }
+
+    public void next(View v){
+        music.stop();
+        playpause.setImageResource(R.drawable.pause);
+        isplaying=false;
+        i+=1;
+        setmusic();
+        play(v);
+    }
+
+    private void setmusic() {
+        if (i%2==0){music = MediaPlayer.create(this, R.raw.royalty);
+            tv.setText("Royalty");
         }
         else{music = MediaPlayer.create(this, R.raw.going_bad);
-        tv.setText("Going Bad");
+            tv.setText("Going Bad");
         }
-        i+=1;
     }
+
 }
